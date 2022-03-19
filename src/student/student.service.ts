@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Student } from './student.entity';
 import { Repository } from 'typeorm'
 import { v4 as uuid } from 'uuid'
+import { CreateStudentInput } from './create-student.input';
 
 @Injectable()
 export class StudentService {
@@ -11,8 +12,9 @@ export class StudentService {
         const student = await this.studentRepository.findOneBy({ id });
         return student;
     }
-    async createStudent(firstName: string, lastName: string): Promise<Student> {
-        const student = await this.studentRepository.create({ id: uuid(), firstName, lastName, });
-        return student;
+    async createStudent(createStudentInput: CreateStudentInput): Promise<Student> {
+        const { firstName, lastName } = createStudentInput
+        const student = await this.studentRepository.create({ id: uuid(), firstName, lastName });
+        return this.studentRepository.save(student);
     }
 }
